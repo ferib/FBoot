@@ -25,7 +25,7 @@ EnterProtectMode:
 
 [BITS 32]
 %include "src\s2\CPUID.asm"
-%include "src\s2\Paging.asm"
+%include "src\s2\paging.asm"
 
 StartProtectedMode:
     mov ax, dataseg
