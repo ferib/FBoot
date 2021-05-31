@@ -9,7 +9,7 @@ EnterProtectMode:
     call EnableA20L
     call check_a20
     cmp ax, 0
-    je .skip
+    je .fail
         cli ; Disable interrupts
         lgdt [gdt_descriptor]
         mov eax, cr0
@@ -17,7 +17,7 @@ EnterProtectMode:
         mov cr0, eax
         jmp codeseg:StartProtectedMode 
         jmp $
-    .skip:
+    .fail:
     sti
     mov bx, a20errStr
     call PrintString
@@ -26,6 +26,9 @@ EnterProtectMode:
 [BITS 32]
 %include "src\s2\CPUID.asm"
 %include "src\s2\paging.asm"
+%include "src\s2\console.asm"
+%include "src\s2\screen.asm"
+%include "src\s2\keyboard.asm"
 
 StartProtectedMode:
     mov ax, dataseg
@@ -35,26 +38,24 @@ StartProtectedMode:
     mov gs, ax
     mov ss, ax
 
-    ; Test
-    mov [0xB8000], byte 'H'
-
     ; Do kewl stuff
     call BootScreen
+    jmp $ ; NOTE: no longmode support for me yet
 
     ; Keep it real!
     call CPUIDDetect
-    call DetectLongmode
+    call DetectLongmode ; NOTE: does longmode exists in VirtualBox??
     call SetupPaging
     call UpdateGDT ; Enabled 64BIT mode
-    jmp codeseg:Gate
+    jmp codeseg:Heaven
+    jmp $
 
 [BITS 64]
-Gate:
+Heaven:
     mov edi, 0xB8000
-    mov rax, 0x1F201F201F201F20
+    mov rax, 0x0720072007200720
     mov ecx, 500
     rep stosq
-    mov [edi], rax
     jmp $
 
 times 4096 - ($-$$) db 0x00

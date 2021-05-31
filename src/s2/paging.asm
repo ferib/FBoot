@@ -24,11 +24,11 @@ SetupPaging:
     or eax, 1 << 5 ; Physical Address Extension
     mov cr4, eax
 
-    mov ecx, 0xC0000000
+    mov ecx, 0xC0000080
     rdmsr
-    or eax, 1 << 8 ; idk?
+    or eax, 1 << 8 ; LM
     wrmsr
     mov eax, cr0
-    or eax, 1 << 31 ; Paging
+    or eax, 1 << 31 | 1 << 0 ; Paging & Protected mode
     mov cr0, eax
     ret

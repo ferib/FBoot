@@ -15,9 +15,3 @@ WelcomeStr:
 
 a20errStr:
     db "A20L failed", 13, 10, 0
-
-longerrStr:
-    db "Longmode failed", 13, 10, 0
-
-CpuiderrStr:
-    db "CPUID failed", 13, 10, 0

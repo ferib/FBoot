@@ -16,6 +16,10 @@ CPUIDDetect:
     ret
 
 DetectLongmode:
+    mov eax, 0x80000000
+    cpuid
+    cmp eax, 0x80000001
+    jb NoLongmode
     mov eax, 0x80000001
     cpuid
     test edx, 1 << 29
@@ -23,11 +27,7 @@ DetectLongmode:
     ret
 
 NoLongmode:
-    mov bx, longerrStr
-    call PrintString
     hlt ; TODO: 
 
 CPUIDFailed:
-    mov bx, CpuiderrStr
-    call PrintString
     hlt ; TODO
