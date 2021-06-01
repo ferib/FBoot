@@ -12,41 +12,33 @@ BootScreen:
 
     mov edi, 0xB8000
     mov eax, 0x0020
-    mov ecx, 80*2
+    mov ecx, 0x50*2
     rep stosw
     
-    ;add edi, 40*3
+    ; TODO: make this out logo
     mov eax, 0x0DDB
-    mov ecx, 80*11
+    mov ecx, 0x50*11
     rep stosw
 
-    ;add edi, 40*11
+    ; padding?
     mov eax, 0x00DB
-    mov ecx, 80*1
+    mov ecx, 0x50*1
     rep stosw
 
-    ; note
-    mov eax, 0x00DB
-    mov ecx, 80*2
-    rep stosw
-
-    mov [CONSOLE_CURSOR], word (160*14) + 66 ; line 14, index 13/2 - 80/2  *2
+    mov [CONSOLE_CURSOR], word (0xA0*14) + 66 ; line 14, index 13/2 - 80/2  *2
     mov ebx, WebsiteStr
     call ConsoleWrite
-    mov [CONSOLE_CURSOR], word (160*17); // line 17
+
+    mov [CONSOLE_CURSOR], word (0xA0*17); // line 17
     mov [CONSOLE_COLOR], byte 0x0E ; light yellow
 
-    mov ebx, MenuVersionStr
-    call WriteMenuItem
-
-    mov ebx, MenuScanStr
-    call WriteMenuItem
-
-    mov ebx, MenuVersionStr
+    mov ebx, MenuWelcomeStr
     call WriteMenuItem
 
     mov ebx, MenuScanStr
     call WriteMenuItem 
+
+    ; TODO: Do something usefull?
 
     ret
 
@@ -78,14 +70,17 @@ DrawImg:
 ; 249 - middle dot
 ; 174, 175 - doubble >> and <<
 
+TestStr:
+    db "X", 0
+
 WebsiteStr:
     db "www.ferib.dev", 0
 
-MenuVersionStr:
+MenuWelcomeStr:
     db "Ferib's Bootloader v1.0 - Welcome!", 0
 
 MenuScanStr:
     db "Scanning Disk Sections...", 0
 
 MenuStrPrefix:
-    db 0x20, 0xAF, 0x20, 0x00 ; > 
+    db 0x20, 0xAF, 0x20, 0 ; > 
