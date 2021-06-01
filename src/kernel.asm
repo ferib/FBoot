@@ -1,9 +1,9 @@
 [ORG 0x7E00]
 jmp EnterProtectMode
 
-%include "src\s1\print.asm"
-%include "src\s2\GDT.asm"
-%include "src\s2\A20L.asm"
+%include "src\print.asm"
+%include "src\kernel\GDT.asm"
+%include "src\kernel\A20L.asm"
 
 EnterProtectMode:
     call EnableA20L
@@ -15,7 +15,7 @@ EnterProtectMode:
         mov eax, cr0
         or eax, 1 ; protected mode enabled
         mov cr0, eax
-        jmp codeseg:StartProtectedMode 
+        jmp codeseg:ProtectedMode 
         jmp $
     .fail:
     sti
@@ -24,13 +24,13 @@ EnterProtectMode:
     jmp $
 
 [BITS 32]
-%include "src\s2\CPUID.asm"
-%include "src\s2\paging.asm"
-%include "src\s2\console.asm"
-%include "src\s2\screen.asm"
-%include "src\s2\keyboard.asm"
+%include "src\kernel\CPUID.asm"
+%include "src\kernel\paging.asm"
+%include "src\util\console.asm"
+%include "src\util\screen.asm"
+%include "src\drivers\keyboard.asm"
 
-StartProtectedMode:
+ProtectedMode:
     mov ax, dataseg
     mov ds, ax
     mov es, ax
@@ -39,7 +39,7 @@ StartProtectedMode:
     mov ss, ax
 
     ; Do kewl stuff
-    call BootScreen
+    call Screen.Startup
     jmp $ ; NOTE: no longmode support for me yet
 
     ; Keep it real!
@@ -52,8 +52,9 @@ StartProtectedMode:
 
 [BITS 64]
 Heaven:
+    ; Just in case we get to heaven, make screen red
     mov edi, 0xB8000
-    mov rax, 0x0720072007200720
+    mov rax, 0x0420042004200420
     mov ecx, 500
     rep stosq
     jmp $

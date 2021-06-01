@@ -1,24 +1,19 @@
-CONSOLE_COLOR: 
-    db 0x07
-
-CONSOLE_CURSOR: 
-    dw 0x0000
-
-ConsoleClear:
+Console:
+.Clear:
     mov edi, 0xB8000
     mov eax, 0x0020
     mov ecx, 4000
     rep stosb
     ret
 
-ConsoleSetColor:
+.SetColor:
     ; bl = Collor Byte
     mov [CONSOLE_COLOR], bl
     ret ; I think i just inline this?
 
-ConsoleWriteLine:
+.WriteLine:
     ; ebx = StrPtr
-    call ConsoleWrite
+    call .Write
     push eax
     push edx
     mov eax, [CONSOLE_CURSOR]
@@ -32,7 +27,7 @@ ConsoleWriteLine:
     pop eax
     ret
 
-ConsoleWrite:
+.Write:
     ; ebx = StrPtr
     push eax
     push edx
@@ -56,7 +51,7 @@ ConsoleWrite:
     pop eax
     ret
 
-DisableCursor:
+.DisableCursor:
     pushf
     push eax
     push edx
@@ -70,3 +65,9 @@ DisableCursor:
     pop eax
     popf
     ret
+
+CONSOLE_COLOR: 
+    db 0x07
+
+CONSOLE_CURSOR: 
+    dw 0x0000

@@ -1,4 +1,9 @@
 [ORG 0x7C00]
+jmp BootStart
+
+; TODO: BPB
+
+BootStart:
 mov [DISK], dl
 
 ; init stack
@@ -14,8 +19,8 @@ call ReadDisk
 jmp PROGRAM_START
 jmp $
 
-%include "src\s1\print.asm"
-%include "src\s1\disk.asm"
+%include "src\print.asm"
+%include "src\disk.asm"
 
 times 510-($-$$) db 0x00
 
