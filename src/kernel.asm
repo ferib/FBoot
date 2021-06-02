@@ -24,8 +24,8 @@ EnterProtectMode:
     jmp $
 
 [BITS 32]
-%include "src\kernel\CPUID.asm"
 %include "src\kernel\paging.asm"
+%include "src\kernel\CPUID.asm"
 %include "src\util\console.asm"
 %include "src\util\screen.asm"
 %include "src\drivers\keyboard.asm"
@@ -38,9 +38,12 @@ ProtectedMode:
     mov gs, ax
     mov ss, ax
 
-    ; Do kewl stuff
+    ; Print bootscreen
     call Screen.Startup
-    jmp $ ; NOTE: no longmode support for me yet
+
+    ; Do something usefull? NOTE: we only have 8 console lines to print!
+    mov ebx, MenuScanStr
+    call Screen.WriteItem
 
     ; Keep it real!
     call CPUIDDetect
@@ -52,11 +55,12 @@ ProtectedMode:
 
 [BITS 64]
 Heaven:
-    ; Just in case we get to heaven, make screen red
-    mov edi, 0xB8000
-    mov rax, 0x0420042004200420
-    mov ecx, 500
-    rep stosq
+    ; Just in case we get to heaven
+    mov ebx, .HeavenStr
+    call Screen.WriteItem
     jmp $
+
+.HeavenStr:
+    db "Welcome to 64bit!", 0
 
 times 4096 - ($-$$) db 0x00

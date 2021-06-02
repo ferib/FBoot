@@ -27,7 +27,19 @@ DetectLongmode:
     ret
 
 NoLongmode:
-    hlt ; TODO: 
+    mov [CONSOLE_COLOR], byte 0x04 ; black red
+    mov ebx, NoLongmodeStr
+    call Screen.WriteItem ; TOOD: fix?
+    hlt 
 
 CPUIDFailed:
-    hlt ; TODO
+    mov [CONSOLE_COLOR], byte 0x04 ; black red
+    mov ebx, NoCPUIDStr
+    call Screen.WriteItem ; TODO: fix?
+    hlt
+
+NoLongmodeStr:
+    db "No longmode supported!", 0
+
+NoCPUIDStr:
+    db "No CPUID supported!", 0
